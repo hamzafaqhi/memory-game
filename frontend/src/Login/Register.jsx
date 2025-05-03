@@ -1,45 +1,53 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
-import styles from './Register.module.css';
-
+import styles from './Login.module.css';
+import backgroundGif from "../assets/images/play.gif";
+import { useNavigate } from 'react-router-dom';
 const Register = () => {
   const [formData, setFormData] = useState({ username: '', password: '' });
-  const [message, setMessage] = useState('');
-
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/users/register', formData);
-      setMessage(response.data.message);
+      await axios.post('http://localhost:4000/api/users/register', formData);
+      navigate('/login');
     } catch (error) {
-      setMessage(error.response?.data.message || 'Error registering');
+      console.log(error)
+      setError(error.response?.data.message || 'Error registering');
     }
   };
 
   return (
-    <div className={styles.container}>
-      <form onSubmit={handleSubmit}>
-        <h2>Register</h2>
+    <div className={styles.container} style={{ backgroundImage: `url(${backgroundGif})` }}>
+      <h1 className={styles.loginTitle}>Register</h1>
+      <form onSubmit={handleSubmit} > 
         <input
           type="text"
           placeholder="Username"
           value={formData.username}
           onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-          className={styles.input}
+          className={styles.gameBtn}
         />
+
         <input
           type="password"
           placeholder="Password"
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          className={styles.input}
+          className={styles.gameBtn}
         />
-        <button type="submit" className={styles.button}>
-          Register
-        </button>
-        {message && <p className={styles.message}>{message}</p>}
+
+        <div className={styles.buttonContainer}>
+          <button type="submit"  className={styles.gameBtn}>
+            Register
+          </button>
+        </div>
+
+        {error && <p className={styles.errorText}>{error}</p>}
       </form>
     </div>
+    
   );
 };
 

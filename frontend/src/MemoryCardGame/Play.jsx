@@ -206,6 +206,13 @@ const Play = () => {
     }
   };
 
+  const logout = async () => {
+    playClickSound();
+    localStorage.clear();
+    navigate('/login');
+  };
+
+
   return (
     <div
       className="background-container"
@@ -241,6 +248,13 @@ const Play = () => {
           onMouseEnter={playHoverSound}
         >
           Settings
+        </button>
+        <button
+          className={`game-button ${isCalmMode ? "calm-button" : ""}`}
+          onClick={logout}
+          onMouseEnter={playHoverSound}
+        >
+          Logout
         </button>
       </div>
       <Modal

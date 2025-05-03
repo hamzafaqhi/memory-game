@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import styles from './Login.module.css';
-
+import styles from './login.module.css';
+import backgroundGif from "../assets/images/play.gif";
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({ username: '', password: '' });
   const [error, setError] = useState('');
@@ -11,9 +11,14 @@ const Login = ({ onLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:5000/api/users/login', formData);
+      if (!formData.username || !formData.password) {
+        setError('Please enter both username and password.');
+        return;
+      }  
+      const response = await axios.post('http://localhost:4000/api/users/login', formData);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('userID', response.data.userID);
+      
       onLogin();
       navigate('/play');
     } catch (error) {
@@ -30,32 +35,37 @@ const Login = ({ onLogin }) => {
   };
 
   return (
-    <div className={styles.container}>
-      <form onSubmit={handleSubmit}>
-        <h2>Login</h2>
+    <div className={styles.container} style={{ backgroundImage: `url(${backgroundGif})` }}>
+      <h1 className={styles.loginTitle}>Login</h1>
+      <p className="modal-h2">Please enter your credentials below.</p>
+      <form onSubmit={handleSubmit} >
+       
         <input
           type="text"
           placeholder="Username"
           value={formData.username}
           onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-          className={styles.input}
+          className={styles.gameBtn}
         />
+
         <input
           type="password"
           placeholder="Password"
           value={formData.password}
           onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-          className={styles.input}
+          className={styles.gameBtn}
         />
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <button type="submit" className={`${styles.button} ${styles.loginButton}`}>
+
+        <div className={styles.buttonContainer}>
+          <button type="submit" className={styles.gameBtn}>
             Login
           </button>
-          <button type="button" onClick={handleRegisterRedirect} className={`${styles.button} ${styles.registerButton}`}>
+          <button type="button" onClick={handleRegisterRedirect} className={styles.gameBtn}>
             Register
           </button>
         </div>
-        {error && <p className={styles.error}>{error}</p>}
+
+        {error && <p className={styles.errorText}>{error}</p>}
       </form>
     </div>
   );
